@@ -1,6 +1,7 @@
-# Kiko Plus Theme
-
-![image](/images/image.png)
+---
+title: About
+permalink: /about/
+---
 
 You can see live demo [here](https://aweekj.github.io/Kiko-plus). This theme is inspired by [Kiko](http://github.com/gfjaru/Kiko) theme.
 
@@ -30,6 +31,12 @@ You can see live demo [here](https://aweekj.github.io/Kiko-plus). This theme is 
 4. Add remote, which is your repo from the first step, to your new branch `git remote add gh-pages https://github.com/<yourName>/<yourMaster>/gh-pages`. _yourName_ is your account name and _yourMaster_ is your repository.
 5. Push new branch to remote `git push gh-pages`.
 6. Update `_config.yml` file by changing `baseurl: "<branchName>"` _branchName_ is your branch name where _gh-pages_ resides. See [configuration](#configuration).
+
+#### Method 3: Run it locally
+
+1. Download [zip](https://github.com/AWEEKJ/Kiko-plus/archive/master.zip) or clone it `git clone https://github.com/AWEEKJ/Kiko-plus`.
+2. Go inside folder and run `jekyll serve` or `rake preview`. This will build a website which you can access [https://localhost:4000](https://localhost:4000). You need to have [Jekyll](https://jekyllrb.com/docs/installation/) installed to do this.
+
 
 ## Configuration
 
@@ -102,12 +109,6 @@ url: "https://localhost:4000"
 ```yml
 baseurl: "/<branch-name>"
 ```
-
-## Run in Local
-
-1. Download or clone your remote repository.
-2. Go inside folder. First, run `rake geminstall`. 
-3. Second, run `jekyll serve` or `rake preview`. This will build a website which you can access [https://localhost:4000](https://localhost:4000). Make sure that `url` in `_config.yml` file is `url: "https://localhost:4000"`. You need to have [Jekyll](https://jekyllrb.com/docs/installation/) installed to do this.
 
 ## Rakefile Usage
 
