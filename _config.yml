@@ -3,7 +3,7 @@
 # # # # # # # # # # # # #
 
 # Basic
-name:               "Kiko Plus"
+name:               "This Week In Erlang"
 
 author:
   facebook:         your-id
@@ -24,7 +24,7 @@ author:
 
 copyright:
   year:             2017
-  name:             Kiko
+  name:             gootik
 
 # Google-analytics
 google-analytics:
@@ -32,7 +32,7 @@ google-analytics:
 
 # Disqus
 disqus:
-  id:               "kiko-plus"
+  id:               "this-week-in-erlang"
 
 # URL
 url:                "https://gootik.github.io/this-week-in-erlang" # the base hostname & protocol for your site
@@ -41,7 +41,7 @@ baseurl:            "/this-week-in-erlang" # the subpath of your site, e.g. /blo
 
 
 # http://en.wikipedia.org/wiki/List_of_tz_database_time_zones
-timezone:           Asia/Seoul
+timezone:           Europe/London
 permalink:          /:year-:month-:day/:title/
 
 # Pagination
