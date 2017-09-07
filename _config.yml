@@ -75,5 +75,6 @@ gems:
   - jekyll-seo-tag
   - jekyll-paginate
   - jekyll-admin
+  - jekyll-feed
 
 exclude:            [vendor]
