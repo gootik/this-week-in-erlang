@@ -23,9 +23,9 @@ disqus:
   id:               "this-week-in-erlang"
 
 # URL
-url:                "https://gootik.github.io/this-week-in-erlang" # the base hostname & protocol for your site
+url:                "https://gootik.github.io/this-week-in-erlang"
 # url:                "http://localhost:4000" # use this url when you develop
-baseurl:            "/" # the subpath of your site, e.g. /blog
+baseurl:            "/"
 
 
 # http://en.wikipedia.org/wiki/List_of_tz_database_time_zones
@@ -76,5 +76,6 @@ gems:
   - jekyll-paginate
   - jekyll-admin
   - jekyll-feed
+  - jekyll-twitter-plugin
 
 exclude:            [vendor]
