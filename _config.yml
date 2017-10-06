@@ -78,4 +78,6 @@ gems:
   - jekyll-feed
   - jekyll-twitter-plugin
 
+plugins: ['jekyll-twitter-plugin']
+
 exclude:            [vendor]
