@@ -1,6 +1,6 @@
 ### DATE (yyyy/mm/dd)
 
-### CATEGORY (article/library update/announcement/OTP/employment)
+### CATEGORY (article/library update/announcement/OTP/employment/event)
 
 ### DESCRIPTION
 
