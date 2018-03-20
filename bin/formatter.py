@@ -49,6 +49,8 @@ CATEGORY_TO_TITLE = {
     'misc': 'Other News'
 }
 
+TWEET_TEMPLATE = "This week in #Erlang ! Thanks to {}"
+
 def make_get_request(resource):
     return urllib.request.Request("/".join([GITHUB_API, UPSTREAM,resource]))
 
@@ -118,6 +120,11 @@ def issue_item_to_md(item):
         item['description'], 
         item['link'])
 
+def create_tweet(issues):
+    authors = list(map(lambda x : '@' + x['author_twitter'], issues))
+
+    return TWEET_TEMPLATE.format(' '.join(authors))
+
 # get all issues list
 req = urllib.request.urlopen(make_get_request("issues"))
 
@@ -144,4 +151,6 @@ else:
 
     for date in issues_by_date:
         create_post(date, issues_by_date[date])
+        tweet = create_tweet(issues_by_date[date])
+        print("Tweet for {} -- {}".format(date, tweet))
 
