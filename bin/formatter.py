@@ -7,6 +7,9 @@
 # Licensed under the MIT license
 # https://opensource.org/licenses/MIT
 
+import urllib.request
+import json
+import pprint
 
 # TODO: Clean this up.
 
@@ -16,14 +19,10 @@ class TWIEFailure(Exception):
 class TWIEBadIssue(Exception):
     """Error while parsing an issue"""
 
-import urllib.request
-import json
-import pprint
+GITHUB_API = "https://api.github.com"
+UPSTREAM = "repos/gootik/this-week-in-erlang"
 
-GITHUB_API="https://api.github.com"
-UPSTREAM="repos/gootik/this-week-in-erlang"
-
-POST_HEADER = """
+POST_HEADER_TEMPLATE = """
 ---
 layout: post
 title: "This Week In Erlang {}"
@@ -33,13 +32,12 @@ tags: [erlang, news]
 comments: false
 share: true
 ---
+\r\n
 """
 
-POST_INTRO = """
-Welcome to another “This week in Erlang” newsletter.
-"""
-
-CATEGORY_ITEM_TEMPLATE = "- *{}* ([@{}](https://twitter/{})): {} - <{}> \r\n\r\n"
+POST_INTRO_TEMPLATE = 'Welcome to another “This week in Erlang” newsletter.\r\n\r\n'
+CATEGORY_TITLE_TEMPLATE = '### {}\r\n'
+CATEGORY_ITEM_TEMPLATE = '- *{}* ([@{}](https://twitter/{})): {} - <{}>\r\n\r\n'
 
 CATEGORY_TO_TITLE = {
     'article': 'Articles and Blog posts',
@@ -68,14 +66,13 @@ def parse_issue(issue):
     }
 
 def get_value_from_issue_list(l, section):
-
     section_string = "### " + section
 
     index = -1;
     for i, t in enumerate(l):
         if section_string in t:
             index = i
-            break;
+            break
 
     if index + 1 >= len(l) or index == -1:
         raise TWIEBadIssue(section + " has no value in issue.")    
@@ -86,8 +83,8 @@ def get_value_from_issue_list(l, section):
 def create_post(date, items):
     file = open('../_posts/' + date.replace('/', '-') + '.md', 'w+')
 
-    file.write(POST_HEADER.format(date, date))
-    file.write(POST_INTRO)
+    file.write(POST_HEADER_TEMPLATE.format(date, date))
+    file.write(POST_INTRO_TEMPLATE)
 
     item_by_cat = {
         'announcement': [],
@@ -106,7 +103,7 @@ def create_post(date, items):
             item_by_cat['misc'].append(item)
 
     for cat in item_by_cat: 
-        file.write('### {}\r\n'.format(CATEGORY_TO_TITLE[cat]))
+        file.write(CATEGORY_TITLE_TEMPLATE.format(CATEGORY_TO_TITLE[cat]))
 
         for item in item_by_cat[cat]:
             file.write(issue_item_to_md(item))
@@ -129,19 +126,22 @@ if req.status != 200:
 else:
     j = json.loads(req.read().decode())
 
-    issue_by_date = {}
+    issues_by_date = {}
 
     for issue in j:
-        parsed_issue = parse_issue(issue)
+        try:
+            parsed_issue = parse_issue(issue)
 
-        date = parsed_issue['date']
+            date = parsed_issue['date']
 
-        if date:
-            if date not in issue_by_date:
-                issue_by_date[date] = []
+            if date:
+                if date not in issues_by_date:
+                    issues_by_date[date] = []
 
-            issue_by_date[date].append(parsed_issue)
+                issues_by_date[date].append(parsed_issue)
+        except TWIEBadIssue as error:
+            print(error)
 
-    for date in issue_by_date:
-        create_post(date, issue_by_date[date])
+    for date in issues_by_date:
+        create_post(date, issues_by_date[date])
 
