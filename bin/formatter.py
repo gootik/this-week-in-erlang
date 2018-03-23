@@ -105,6 +105,9 @@ def create_post(date, items):
             item_by_cat['misc'].append(item)
 
     for cat in item_by_cat: 
+        if len(item_by_cat[cat]) == 0:
+            continue
+
         file.write(CATEGORY_TITLE_TEMPLATE.format(CATEGORY_TO_TITLE[cat]))
 
         for item in item_by_cat[cat]:
