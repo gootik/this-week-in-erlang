@@ -83,9 +83,10 @@ def get_value_from_issue_list(l, section):
 
 
 def create_post(date, items):
-    file = open('../_posts/' + date.replace('/', '-') + '.md', 'w+')
+    dashed_date = date.replace('/', '-')
+    file = open('../_posts/' + dashed_date + '.md', 'w+')
 
-    file.write(POST_HEADER_TEMPLATE.format(date, date))
+    file.write(POST_HEADER_TEMPLATE.format(date, dashed_date))
     file.write(POST_INTRO_TEMPLATE)
 
     item_by_cat = {
