@@ -13,11 +13,14 @@ import pprint
 
 # TODO: Clean this up.
 
+
 class TWIEFailure(Exception):
     """This week in Erlang exception type"""
 
+
 class TWIEBadIssue(Exception):
     """Error while parsing an issue"""
+
 
 GITHUB_API = "https://api.github.com"
 UPSTREAM = "repos/gootik/this-week-in-erlang"
@@ -35,9 +38,10 @@ share: true
 \r\n
 """
 
-POST_INTRO_TEMPLATE = 'Welcome to another “This week in Erlang” newsletter.\r\n\r\n'
+POST_INTRO_TEMPLATE = 'Welcome to another "This week in Erlang" newsletter.\r\n\r\n'
 CATEGORY_TITLE_TEMPLATE = '### {}\r\n'
 CATEGORY_ITEM_TEMPLATE = '- *{}* ([@{}](https://twitter/{})): {} - <{}>\r\n\r\n'
+CATEGORY_ITEM_TEMPLATE_NO_AUTHOR = '{} - <{}>\r\n\r\n'
 
 CATEGORY_TO_TITLE = {
     'article': 'Articles and Blog posts',
@@ -51,11 +55,13 @@ CATEGORY_TO_TITLE = {
 
 TWEET_TEMPLATE = "This week in #Erlang ! Thanks to {}"
 
-def make_get_request(resource):
-    return urllib.request.Request("/".join([GITHUB_API, UPSTREAM,resource]))
 
-def parse_issue(issue): 
-    body = issue['body']
+def make_get_request(resource):
+    return urllib.request.Request("/".join([GITHUB_API, UPSTREAM, resource]))
+
+
+def parse_issue(issue_json):
+    body = issue_json['body']
     r = list(filter(len, body.split('\r\n')))
 
     return {
@@ -67,27 +73,31 @@ def parse_issue(issue):
         'link': get_value_from_issue_list(r, "LINK"),
     }
 
+
 def get_value_from_issue_list(l, section):
     section_string = "### " + section
 
-    index = -1;
+    index = -1
     for i, t in enumerate(l):
         if section_string in t:
             index = i
             break
 
-    if index + 1 >= len(l) or index == -1:
+    if (index + 1 >= len(l) or index == -1) and section not in ["AUTHOR NAME", "AUTHOR TWITTER"]:
         raise TWIEBadIssue(section + " has no value in issue.")    
 
-    return l[index + 1]
+    if index + 1 < len(l):
+        return l[index + 1]
+    else:
+        return ''
 
 
-def create_post(date, items):
-    dashed_date = date.replace('/', '-')
-    file = open('../_posts/' + dashed_date + '.md', 'w+')
+def create_post(date_string, items):
+    dashed_date = date_string.replace('/', '-')
+    out_file = open('../_posts/' + dashed_date + '.md', 'w+')
 
-    file.write(POST_HEADER_TEMPLATE.format(date, dashed_date))
-    file.write(POST_INTRO_TEMPLATE)
+    out_file.write(POST_HEADER_TEMPLATE.format(date_string, dashed_date))
+    out_file.write(POST_INTRO_TEMPLATE)
 
     item_by_cat = {
         'announcement': [],
@@ -101,7 +111,7 @@ def create_post(date, items):
 
     for item in items:
         if item['category'] in item_by_cat:
-           item_by_cat[item['category']].append(item)
+            item_by_cat[item['category']].append(item)
         else:
             item_by_cat['misc'].append(item)
 
@@ -109,25 +119,33 @@ def create_post(date, items):
         if len(item_by_cat[cat]) == 0:
             continue
 
-        file.write(CATEGORY_TITLE_TEMPLATE.format(CATEGORY_TO_TITLE[cat]))
+        out_file.write(CATEGORY_TITLE_TEMPLATE.format(CATEGORY_TO_TITLE[cat]))
 
         for item in item_by_cat[cat]:
-            file.write(issue_item_to_md(item))
+            out_file.write(issue_item_to_md(item))
 
-    file.close()
+    out_file.close()
+
 
 def issue_item_to_md(item):
-    return CATEGORY_ITEM_TEMPLATE.format(
-        item['author_name'], 
-        item['author_twitter'], 
-        item['author_twitter'], 
-        item['description'], 
-        item['link'])
+    if item['author_name'] != '':
+        return CATEGORY_ITEM_TEMPLATE.format(
+            item['author_name'],
+            item['author_twitter'],
+            item['author_twitter'],
+            item['description'],
+            item['link'])
+    else:
+        return CATEGORY_ITEM_TEMPLATE_NO_AUTHOR.format(
+                item['description'],
+                item['link'])
+
 
 def create_tweet(issues):
-    authors = list(map(lambda x : '@' + x['author_twitter'], issues))
+    authors = list(map(lambda x: '@' + x['author_twitter'], issues))
 
     return TWEET_TEMPLATE.format(' '.join(authors))
+
 
 # get all issues list
 req = urllib.request.urlopen(make_get_request("issues"))
@@ -157,4 +175,3 @@ else:
         create_post(date, issues_by_date[date])
         tweet = create_tweet(issues_by_date[date])
         print("Tweet for {} -- {}".format(date, tweet))
-
