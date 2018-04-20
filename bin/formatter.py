@@ -65,16 +65,16 @@ def parse_issue(issue_json):
     r = list(filter(len, body.split('\r\n')))
 
     return {
-        'date': get_value_from_issue_list(r, "DATE"),
-        'author_name': get_value_from_issue_list(r, "AUTHOR NAME"),
-        'author_twitter': get_value_from_issue_list(r, "AUTHOR TWITTER"),
-        'category': get_value_from_issue_list(r, "CATEGORY"),
-        'description': get_value_from_issue_list(r, "DESCRIPTION"),
-        'link': get_value_from_issue_list(r, "LINK"),
+        'date': get_value_from_issue_list(r, "DATE", issue_json),
+        'author_name': get_value_from_issue_list(r, "AUTHOR NAME", issue_json),
+        'author_twitter': get_value_from_issue_list(r, "AUTHOR TWITTER", issue_json),
+        'category': get_value_from_issue_list(r, "CATEGORY", issue_json),
+        'description': get_value_from_issue_list(r, "DESCRIPTION", issue_json),
+        'link': get_value_from_issue_list(r, "LINK", issue_json),
     }
 
 
-def get_value_from_issue_list(l, section):
+def get_value_from_issue_list(l, section, issue_json):
     section_string = "### " + section
 
     index = -1
@@ -84,6 +84,7 @@ def get_value_from_issue_list(l, section):
             break
 
     if (index + 1 >= len(l) or index == -1) and section not in ["AUTHOR NAME", "AUTHOR TWITTER"]:
+        print(issue_json);
         raise TWIEBadIssue(section + " has no value in issue.")    
 
     if index + 1 < len(l):
